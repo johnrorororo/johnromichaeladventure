@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Adventure Memories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style> 
+    
+        /* --- PINAKA DESIGN --- */
+        :root {
+            --black: #222; 
+            --accent: #CD7F32;
+            --tape: rgba(255, 255, 255, 0.5);
+            --book-green: #79D7BE;
+        }
+
+        body {
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Patrick Hand', cursive;
+            background-color: #1a1a2e;
+        }
+
+        /* --- RESPONSIVE SA CITY BACKGROUND --- */
+        .city-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 400%; 
+            height: 100%;
+            background-image: url('CITYBACKGROUND.png');
+            background-size: contain; 
+            background-repeat: repeat-x;
+            background-position: bottom;
+            z-index: -2;
+            animation: scrollCity 120s linear infinite;
+        }
+
+        @keyframes scrollCity {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.2));
+            z-index: -1;
+        }
+
+        /* --- UNG CHARACTERS MOVING RIGHT TO LEFT --- */
+        .character-container {
+            position: fixed;
+            bottom: 3vh; 
+            width: 100%;
+            height: 100px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .boy {
+            position: absolute;
+            font-size: clamp(40px, 10vw, 70px); 
+            bottom: 0;
+            animation: walkToLeft 35s linear infinite, bobbing 0.6s ease-in-out infinite alternate;
+            transform: scaleX(1); 
+        }
+
+        .boy1 { animation-delay: 0s; }
+        .boy2 { animation-delay: 2.5s; } 
+
+        @keyframes walkToLeft {
+            from { right: -150px; } 
+            to { right: 110vw; }   
+        }
+
+        @keyframes bobbing {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        /* --- UNG DESIGN PA ULIT --- */
+        header { text-align: center; margin-top: 6vh; z-index: 10; padding: 0 20px; }
+        h1 { 
+            font-family: 'Fredoka One'; 
+            font-size: clamp(2.5rem, 12vw, 5rem); 
+            margin: 0; 
+            color: white;
+            text-shadow: 4px 4px 0px var(--black);
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 4vw, 1.8rem); 
+            color: var(--accent); 
+            margin: 0; 
+            font-weight: bold;
+            background: rgba(0,0,0,0.4);
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+        }
+
+        .shelf-area { width: 95%; max-width: 1100px; z-index: 10; padding-bottom: 120px; }
+        .books-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 20px; }
+
+        .book {
+            width: clamp(150px, 50vw, 170px); 
+            height: clamp(200px, 55vw, 220px);
+            border: 4px solid var(--black);
+            border-radius: 8px 18px 18px 8px;
+            cursor: pointer;
+            background-color: var(--book-green);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center; 
+            padding: 10px; 
+        }
+        .book:hover { transform: translateY(-12px) rotate(-3deg); }
+
+        /* --- SA MUSIC PLAYER --- */
+        .music-player {
+            position: fixed; bottom: 20px; left: 20px;
+            background: white; border: 3px solid var(--black);
+            padding: 12px; border-radius: 12px;
+            box-shadow: 6px 6px 0px var(--accent);
+            width: clamp(150px, 45vw, 220px); z-index: 90;
+        }
+
+        /* ---SA OVERLAY --- */
+        .overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .scrapbook-window {
+            width: 90%; max-width: 420px; height: 80vh; background: white;
+            border: 5px solid var(--accent); border-radius: 15px; padding: 20px;
+            display: flex; flex-direction: column; position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="city-bg"></div>
+    <div class="bg-overlay"></div>
+
+    <div class="character-container">
+        <div class="boy boy1">🚶‍♂️</div>
+        <div class="boy boy2">🏃‍♂️</div>
+    </div>
+
+    <header> 
+        <h1>Our Adventure</h1>
+        <p class="subtitle">Collecting memories together</p>
+    </header>
+
+    <div class="shelf-area">
+        <div class="books-container">
+            <div id="active-books" style="display:contents;"></div>
+            <div class="book-empty" style="width: clamp(120px, 35vw, 130px); height: clamp(160px, 45vw, 170px); border: 3px dashed white; border-radius: 8px 18px 18px 8px; display: flex; align-items: center; justify-content: center; color: white;">Next Trip?</div>
+            <div class="book-empty" style="width: clamp(120px, 35vw, 130px); height: clamp(160px, 45vw, 170px); border: 3px dashed white; border-radius: 8px 18px 18px 8px; display: flex; align-items: center; justify-content: center; color: white;">Coming Soon</div>
+        </div>
+    </div>
+
+    <div class="music-player">
+        <div style="font-family:'Fredoka One';">🎧 About You</div>
+        <div style="height: 6px; background: #e0e0e0; border-radius: 10px; margin: 10px 0; cursor: pointer;" onclick="setProgress(event)">
+            <div id="progressBar" style="width: 0%; height: 100%; background: var(--accent); border-radius: 10px;"></div>
+        </div>
+        <div style="display:flex; justify-content:center;">
+            <button id="playBtn" onclick="toggleMusic()" style="background:var(--black); color:white; border:none; border-radius:50%; width:35px; height:35px; cursor:pointer;">▶</button>
+        </div>
+        <audio id="bgMusic" loop src="AboutYou.mp3"></audio>
+    </div>
+
+    <div id="overlay" class="overlay">
+        <div class="scrapbook-window">
+            <div style="position: absolute; top: 10px; right: 10px; cursor: pointer; background: #ff5e5e; color: white; padding: 5px 10px; border: 2px solid #000; border-radius: 20px; font-family: 'Fredoka One';" onclick="closeScrapbook()">CLOSE</div>
+            <h2 id="page-title" style="font-family: 'Fredoka One'; margin-top: 10px;"></h2>
+            <div id="photo-content" style="flex-grow:1; border:4px solid #000; margin:15px 0; overflow:hidden; background: #eee;"></div>
+            <p id="page-desc" style="text-align: center; font-weight: bold;"></p>
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <button style="padding: 10px; cursor: pointer;" onclick="changePage(-1)">←</button>
+                <span id="page-num" style="font-family: 'Fredoka One';"></span>
+                <button style="padding: 10px; cursor: pointer;" onclick="changePage(1)">→</button>
+            </div>
+        </div>
+    </div>
+
+    <script>       /* --- DITO LALAGAY UNG MGA MEMORIES (PHOTOS, TITLE, ETC) --- */
+        const library = [{
+            id: "baguio",
+            title: "BAGUIO 2026",
+            color: "#FF8C42",
+            icon: "🌲",
+            memories: [
+                    { title: "Baguio Memories", img: "JANUARY 2026/BusTicket.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Morning.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Midnight.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/SmBaguio.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Food.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/View.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/NightRide.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Foodie.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Us.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Us1.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Pb1.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Pb2.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/Pb3.jpg", desc: "JANUARY 2026" },
+                    { title: "Baguio Memories", img: "JANUARY 2026/RingBracelet.jpg", desc: "JANUARY 2026" }
+            ]
+        },
+
+        {
+            id: "manila",
+            title: "NATIONAL MUSEUM + SM MANILA",
+            color: "#FF8C42",
+            icon: "🏛️",
+             memories: [
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/selfie1.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/MirrorShot.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/M1.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/HoldingHands.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/BackShot.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/M2.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/.51.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/Michael.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/ME.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/M3.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/M4.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/.52.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mselfie1.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mselfie2.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/screen1.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mirrorbackshot.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mselfie3.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mselfie4.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/screen2.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/mselfie5.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/.53.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/0.54.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/pbb1.jpg", desc: "April 2026" },
+                { title: "National Museum + Sm Manila Memories", img: "APRIL 2026/pbb2.jpg", desc: "April 2026" },
+            ]
+        }
+    
+    ];
+
+        let activeTrip = null; 
+        let currentPage = 0;
+        const audio = document.getElementById('bgMusic');
+
+        function buildShelf() {
+        const shelf = document.getElementById('active-books');
+        shelf.innerHTML = ''; 
+    
+         library.forEach(trip => {
+        const book = document.createElement('div');
+        book.className = 'book';
+        
+ 
+        book.style.backgroundColor = trip.color; 
+        
+        book.innerHTML = `
+            <div style="font-size:1.3rem; font-family:'Fredoka One'; color: var(--black);">${trip.title}</div>
+            <div style="font-size:2.5rem;">${trip.icon}</div>
+        `;
+        
+        book.onclick = () => { 
+            activeTrip = trip; 
+            currentPage = 0; 
+            updatePage(); 
+            document.getElementById('overlay').style.display = 'flex'; 
+        };
+        shelf.appendChild(book);
+    });
+}
+
+        function updatePage() {
+            const memory = activeTrip.memories[currentPage];
+            document.getElementById('page-title').innerText = memory.title;
+            document.getElementById('page-desc').innerText = memory.desc;
+            document.getElementById('page-num').innerText = `${currentPage + 1} / ${activeTrip.memories.length}`;
+            document.getElementById('photo-content').innerHTML = `<img src="${memory.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/400?text=Photo+Missing'">`;
+        }
+
+        function changePage(step) { 
+            if(activeTrip.memories[currentPage + step]) { 
+                currentPage += step; 
+                updatePage(); 
+            } 
+        }
+
+        function closeScrapbook() { 
+            document.getElementById('overlay').style.display = 'none'; 
+        }
+
+        function toggleMusic() { 
+            if (audio.paused) { 
+                audio.play(); 
+                document.getElementById('playBtn').innerText = "⏸"; 
+            } else { 
+                audio.pause(); 
+                document.getElementById('playBtn').innerText = "▶"; 
+            } 
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressBar').style.width = progress + "%";
+        });
+
+        function setProgress(e) {
+            const width = e.currentTarget.clientWidth;
+            const clickX = e.offsetX;
+            audio.currentTime = (clickX / width) * audio.duration;
+        }
+
+        buildShelf();
+    </script>
+</body>
+</html>
